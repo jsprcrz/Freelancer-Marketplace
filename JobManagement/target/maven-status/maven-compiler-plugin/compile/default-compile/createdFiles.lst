@@ -1,0 +1,6 @@
+coe692/lab5/job/helper/Job.class
+coe692/lab5/job/business/SearchBusiness.class
+coe692/lab5/job/persistence/JobCRUD.class
+coe692/lab5/job/endpoint/SearchJobResource.class
+coe692/lab5/job/helper/JobXML.class
+coe692/lab5/job/endpoint/ApplicationConfig.class
