@@ -1,0 +1,12 @@
+coe692/lab5/helper/JobXML.class
+coe692/lab5/helper/User.class
+coe692/lab5/helper/Freelancer.class
+coe692/lab5/business/XMLParser.class
+coe692/lab5/helper/UserXML.class
+coe692/lab5/business/JobBusiness.class
+coe692/lab5/helper/FreelancerXML.class
+coe692/lab5/business/FreelancerBusiness.class
+coe692/lab5/frontend/Authenticate.class
+coe692/lab5/helper/Job.class
+coe692/lab5/business/UserBusiness.class
+coe692/lab5/frontend/FrontEnd.class
