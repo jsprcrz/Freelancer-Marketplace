@@ -1,0 +1,10 @@
+coe692/lab5/registeredUser/business/Messaging$1.class
+coe692/lab5/registeredUser/persistence/UserCRUD.class
+coe692/lab5/registeredUser/business/SearchBusiness.class
+coe692/lab5/registeredUser/endpoint/MyAppServletContextListener$1.class
+coe692/lab5/registeredUser/helper/User.class
+coe692/lab5/registeredUser/helper/UserXML.class
+coe692/lab5/registeredUser/business/Messaging.class
+coe692/lab5/registeredUser/endpoint/MyAppServletContextListener.class
+coe692/lab5/registeredUser/endpoint/SearchUserResource.class
+coe692/lab5/registeredUser/endpoint/ApplicationConfig.class
