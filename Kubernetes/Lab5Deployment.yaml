@@ -1,0 +1,296 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: freelancerdb-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: freelancerdb
+spec:
+  selector:
+    app: freelancerdb
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freelancerdb
+spec:
+  selector:
+    matchLabels:
+      app: freelancerdb
+  template:
+    metadata:
+      labels:
+        app: freelancerdb
+    spec:
+      containers:
+        - name: freelancerdb
+          image: jbcruz/coe692:freelancerdb
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: storage 
+              mountPath: /data/freelancerdb
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: freelancerdb-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freelancer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freelancer
+  template:
+    metadata:
+      labels:
+        app: freelancer
+    spec:
+      containers:
+        - name: freelancer
+          image: jbcruz/coe692:freelancerWebApp
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: freelancerdb:3306
+            - name: kubeMQAddress
+              value: 10.60.10.35:50000
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jobdb-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobdb
+spec:
+  selector:
+    app: jobdb
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobdb
+spec:
+  selector:
+    matchLabels:
+      app: jobdb
+  template:
+    metadata:
+      labels:
+        app: jobdb
+    spec:
+      containers:
+        - name: jobdb
+          image: jbcruz/coe692:jobdb
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: storage
+              mountPath: /data/jobdb
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: jobdb-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job
+  template:
+    metadata:
+      labels:
+        app: job
+    spec:
+      containers:
+        - name: job
+          image: jbcruz/coe692:jobWebApp
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: jobdb:3306
+            - name: kubeMQAddress
+              value: 10.60.10.35:50000
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: registereduserdb-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registereduserdb
+spec:
+  selector:
+    app: registereduserdb
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registereduserdb
+spec:
+  selector:
+    matchLabels:
+      app: registereduserdb
+  template:
+    metadata:
+      labels:
+        app: registereduserdb
+    spec:
+      containers:
+        - name: registereduserdb
+          image: jbcruz/coe692:registereduserdb
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: storage
+              mountPath: /data/registereduserdb
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: registereduserdb-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registereduser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registereduser
+  template:
+    metadata:
+      labels:
+        app: registereduser
+    spec:
+      containers:
+        - name: registereduser
+          image: jbcruz/coe692:registereduserWebApp
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: registereduserdb:3306
+            - name: kubeMQAddress
+              value: 10.60.10.35:50000
+          imagePullPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: marketplace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: marketplace
+  template:
+    metadata:
+      labels:
+        app: marketplace
+    spec:
+      containers:
+        - name: marketplace
+          image: jbcruz/coe692:marketplaceWebApp
+          ports:
+            - containerPort: 8080
+          env:
+            - name: freelancerService
+              value: freelancer:80
+            - name: jobService
+              value: job:80
+            - name: userService
+              value: registereduser:80
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: freelancer
+spec:
+  selector:
+    app: freelancer
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: job
+spec:
+  selector:
+    app: job
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registereduser
+spec:
+  selector:
+    app: registereduser
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: marketplace
+spec:
+  selector:
+    app: marketplace
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer
